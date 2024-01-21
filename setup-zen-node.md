@@ -98,7 +98,7 @@ sudo add-apt-repository -y ppa:certbot/certbot
 zen-cli getnetworkinfo
 
 **If it works, you will be able to see the message:**
-`tls_cert_verified”: true`
+`"tls_cert_verified”: true`
 
 
 
