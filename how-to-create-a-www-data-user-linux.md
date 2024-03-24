@@ -35,3 +35,8 @@ sudo chown -R www-data:www-data /var/www/html
 sudo chmod -R g+w /var/www/html
 ```
 
+> [!TIP]
+> you could also set the new users home directory to the /var/www folder if desired like this:
+> ```
+> usermod -d /var/www $NAME
+> ```
