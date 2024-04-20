@@ -108,5 +108,9 @@ sudo postconf -e 'myhostname = mail.yourdomain.com'
 sudo postconf -e 'smtpd_tls_CAfile = /etc/ssl/certs/mail.fullchain.pem'
 ```
 - After all of this, we should have now enabled SMTP-AUTH correctly, you can double check your values, and/or edit them in the `/etc/postfix/main.cf` file.
+- Restart Postfix service:
+```
+sudo systemctl restart postfix.service
+```
 ### Self-Signed certificate
 - Essentially the same as aboce, however we need to generate a certificate.. this way should work for most cases, however a self-signed certificate is considered less secure as we are declaring that we are real ourselves rather than using a CA to provide this service for us. Considering this, lets continue.
