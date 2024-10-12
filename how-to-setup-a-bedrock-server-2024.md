@@ -11,6 +11,12 @@ sudo apt-get install openjdk-17-jdk
 sudo useradd mcserver
 sudo mkdir /home/mcserver/minecraftbedrock
 ```
+OR
+```bash
+sudo useradd -m -d /home/mcserver mcserver
+sudo mkdir /home/mcserver/minecraftbedrock
+```
+
 Download and Extract the Minecraft Bedrock Server
 
 1. Download the Minecraft Bedrock server software from the official website: <https://minecraft.net/en-us/download/server/bedrock/>
