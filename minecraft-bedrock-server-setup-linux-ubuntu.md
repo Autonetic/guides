@@ -11,7 +11,7 @@ sudo apt install -y curl wget unzip screen openssl libssl1.1
 3. Create a user to run the server:
 ```
 sudo useradd -m -d /home/mcserver mcserver
-sudo mkdir /home/mcserver/minecraftbedrock
+sudo mkdir /home/mcserver/minecraft_bedrock/
 ```
 3. Install Minecraft Bedrock Server: `https://minecraft.net/en/download/server/bedrock/`
 ```
@@ -21,25 +21,22 @@ sudo wget https://minecraft.net/en/download/server/bedrock/ -O bedrock-server-1.
 
 **Step 2: Configure and Launch the Server**
 
-1. Create a directory for the server:
-```
-sudo mkdir -p /home/mcserver/minecraft_bedrock/
-```
-2. Change ownership of the directory:
+1. Change ownership of the directory:
 ```
 sudo chown -R mcserver: /home/mcserver/
 ```
+2. Edit the `server.properties` file:
+```
+sudo nano /home/mcserver/minecraft_bedrock/server.properties
+```
 3. Launch the server in a detached screen session:
 ```
-screen -S mc_Java_server -dm java -Xmx1024M -Xms1024M -jar /home/mcserver/minecraft_bedrock/bedrock_server.jar nogui
+screen -S mc_server -dm java -Xmx1024M -Xms1024M -jar /home/mcserver/minecraft_bedrock/bedrock_server.jar nogui
 ```
 
 **Step 3: Configure Server Properties**
 
-1. Edit the `server.properties` file:
-```
-sudo nano /home/mcserver/minecraft_bedrock/server.properties
-```
+
 2. Set desired settings, such as game mode, difficulty, and server name.
 4. Save and exit the editor. `ctrl + x` then `y` 
 
