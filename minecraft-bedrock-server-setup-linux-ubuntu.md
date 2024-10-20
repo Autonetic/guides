@@ -1,21 +1,47 @@
 **Step 1: Install Required Packages**
 
-1. Update the package list: `sudo apt update`
-2. Install essential packages: `sudo apt install -y curl wget unzip screen openssl libssl1.1`
-3. Install Minecraft Bedrock Server: `sudo wget https://minecraft.net/en/download/server/bedrock/ -O bedrock-server.zip && sudo unzip bedrock-server.zip -d /home/mcserver/minecraft_bedrock/`
+1. Update the package list:
+```
+sudo apt update -y
+```
+2. Install essential packages:
+```
+sudo apt install -y curl wget unzip screen openssl libssl1.1
+```
+3. Create a user to run the server:
+```
+sudo useradd -m -d /home/mcserver mcserver
+sudo mkdir /home/mcserver/minecraftbedrock
+```
+3. Install Minecraft Bedrock Server: `https://minecraft.net/en/download/server/bedrock/`
+```
+sudo wget https://minecraft.net/en/download/server/bedrock/ -O bedrock-server-1.21.31.04.zip && sudo unzip bedrock-server-1.21.31.04.zip -d /home/mcserver/minecraft_bedrock/
+```
+
 
 **Step 2: Configure and Launch the Server**
 
-1. Create a user for the Minecraft server: `sudo useradd -m mcserver`
-2. Create a directory for the server: `sudo mkdir -p /home/mcserver/minecraft_bedrock/`
-3. Change ownership of the directory: `sudo chown -R mcserver: /home/mcserver/`
-4. Launch the server in a detached screen session: `screen -S mc_Java_server -dm java -Xmx1024M -Xms1024M -jar /home/mcserver/minecraft_bedrock/bedrock_server.jar nogui`
+1. Create a directory for the server:
+```
+sudo mkdir -p /home/mcserver/minecraft_bedrock/
+```
+2. Change ownership of the directory:
+```
+sudo chown -R mcserver: /home/mcserver/
+```
+3. Launch the server in a detached screen session:
+```
+screen -S mc_Java_server -dm java -Xmx1024M -Xms1024M -jar /home/mcserver/minecraft_bedrock/bedrock_server.jar nogui
+```
 
 **Step 3: Configure Server Properties**
 
-1. Edit the `server.properties` file: `sudo nano /home/mcserver/minecraft_bedrock/server.properties`
-2. Set desired settings, such as game mode, difficulty, and server name
-3. Save and exit the editor
+1. Edit the `server.properties` file:
+```
+sudo nano /home/mcserver/minecraft_bedrock/server.properties
+```
+2. Set desired settings, such as game mode, difficulty, and server name.
+4. Save and exit the editor. `ctrl + x` then `y` 
 
 **Step 4: Start and Monitor the Server**
 
