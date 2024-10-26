@@ -21,3 +21,5 @@ class Admin {
 
 }
 ```
+**simple usage:**
+`Admin::get_rank()`
