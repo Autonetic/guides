@@ -33,3 +33,32 @@ CREATE TABLE ranks(
     ranks ENUM('Administrator', 'Moderator', 'User') NOT NULL
 );
 ```
+
+# Using ENUM specifically:
+instead of the above methods, you could use php's built in enum or enumeration functions:
+
+```php
+enum Rank
+{
+    case ADMIN;
+    case MOD;
+    case USER;
+    
+    public function ranks(): string
+    {
+        return match($this) 
+        {
+            Rank::ADMIN => 'Administrator',   
+            Rank::MOD => 'Moderator',   
+            Rank::USER => 'User',   
+        };
+    }
+}
+```
+usage would then be:
+
+```php
+$rank = Rank::ADMIN;
+
+$rank->ranks(); // 'Administrator'
+```
