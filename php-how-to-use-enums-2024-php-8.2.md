@@ -11,7 +11,7 @@ class Admin {
     public static function get_rank()
     {
 
-        // only works in php >=5.4 otherwise use return array('Category1'...);
+        // only works in php >=5.4 otherwise use return array('Administrator'...);
         return [
           'Administrator' => 'Admin',
           'Moderator' => 'Mod',
