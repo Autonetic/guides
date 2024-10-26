@@ -5,7 +5,7 @@ The best practice is to create a class in php so that these rank variables stay 
 
 example:
 
-```
+```php
 class Admin {
 
     public static function get_rank()
