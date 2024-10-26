@@ -23,3 +23,13 @@ class Admin {
 ```
 **simple usage:**
 `Admin::get_rank()`
+
+## MySQL ENUM Example
+here are some examples for processing data on the database end:
+
+```sql
+CREATE TABLE ranks(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ranks ENUM('Administrator', 'Moderator', 'User') NOT NULL
+);
+```
