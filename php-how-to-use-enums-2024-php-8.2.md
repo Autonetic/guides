@@ -62,3 +62,72 @@ $rank = Rank::ADMIN;
 
 $rank->ranks(); // 'Administrator'
 ```
+
+
+# the following needs to be reviewed:
+
+Enums are a new feature in PHP 8.1 that allows you to define a custom type with a fixed set of values. In the context of MySQL and PHP, enums can be used to represent a limited set of values, such as ranks, in a more type-safe and readable way.
+
+**MySQL ENUM Type**
+
+In MySQL, the ENUM type is a string object that can have a value chosen from a list of permitted values specified at table creation time. For example:
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  rank ENUM('admin', 'moderator', 'user')
+);
+```
+This creates a `rank` column with three possible values: `admin`, `moderator`, and `user`.
+
+**PHP 8.1 Enums**
+
+In PHP 8.1, you can define an enum type using the `enum` keyword:
+```php
+enum Rank {
+  case ADMIN;
+  case MODERATOR;
+  case USER;
+}
+```
+This defines an `Rank` enum with three possible values: `ADMIN`, `MODERATOR`, and `USER`.
+
+**Mapping MySQL ENUM to PHP 8.1 Enum**
+
+To map the MySQL ENUM values to the PHP 8.1 enum, you can use a simple mapping array:
+```php
+$rankMap = [
+  'admin' => Rank::ADMIN,
+  'moderator' => Rank::MODERATOR,
+  'user' => Rank::USER,
+];
+```
+This mapping array translates the MySQL ENUM values to their corresponding PHP 8.1 enum values.
+
+**Using Enums in PHP**
+
+Now that you have defined the enum and mapped it to the MySQL ENUM values, you can use it in your PHP code:
+```php
+$user = new User();
+$user->rank = Rank::MODERATOR; // Set the rank using the enum
+
+// Retrieve the rank from the database
+$rank = $user->getRank(); // Returns the enum value (e.g., Rank::MODERATOR)
+
+// Validate the rank
+if ($rank === Rank::ADMIN) {
+  // Handle admin-specific logic
+} elseif ($rank === Rank::MODERATOR) {
+  // Handle moderator-specific logic
+} else {
+  // Handle user-specific logic
+}
+```
+**Benefits**
+
+Using enums in PHP for ranks with MySQL provides several benefits:
+
+1. **Type safety**: Enums ensure that only valid values are assigned to the `rank` column, preventing invalid or unexpected values from being stored.
+2. **Readability**: Enums make your code more readable by providing a clear and concise way to represent the possible values.
+3. **Maintainability**: Enums simplify the process of adding or removing values from the `rank` column, as you only need to update the mapping array.
+
+By leveraging enums in PHP 8.1 and mapping them to MySQL ENUM values, you can create a more robust and maintainable system for representing ranks in your application.
