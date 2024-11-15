@@ -63,6 +63,23 @@ $rank = Rank::ADMIN;
 $rank->ranks(); // 'Administrator'
 ```
 
+In context:
+
+```php
+$rank = Rank::ADMIN;
+//Using $rank->ranks();
+if ($rank === Rank::ADMIN) {
+  // Handle admin-specific logic
+  echo "Hello " . $rank->ranks();
+} elseif ($rank === Rank::MOD) {
+  // Handle moderator-specific logic
+  echo "Hello " . $rank->ranks();
+} else {
+  // Handle user-specific logic
+  echo "Welcome " . $rank->ranks();
+}
+```
+
 
 # the following needs to be reviewed:
 
