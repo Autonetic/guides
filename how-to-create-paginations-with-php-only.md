@@ -1,6 +1,6 @@
 Display X Posts, Next Page
 
-Based on your query, I'll provide a PHP class that displays a specified number of posts (e.g., 10) and then allows navigation to the next page of posts. This implementation is not specific to WordPress, as you requested.
+A simple PHP class that displays a specified number of posts (e.g., 10) and then allows navigation to the next page of posts. This implementation is not specific to WordPress or any other CMS.
 
 **Post Paginator Class**
 ```php
