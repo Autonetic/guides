@@ -9,6 +9,17 @@ Create a MySQL table named `news` with the following columns:
 * `content` (TEXT)
 * `date` (DATE)
 
+```sql
+CREATE TABLE `news` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `author` varchar(255) DEFAULT NULL,
+  `content` text DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+```
+
+
 **News Class**
 
 Create a PHP class `News` with the following methods:
