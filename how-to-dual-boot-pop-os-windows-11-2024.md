@@ -50,7 +50,7 @@ sudo cp -r /mnt/EFI/Microsoft /boot/efi/EFI/
 sudo reboot
 ```
 
-The idea behind this process is simply the PC doesnt need to ESP partitions and we basically want to copy all the files from windows boot manager to systemd-boot to allow us to easily swap OS!
+The idea behind this process is simply the PC doesnt need two ESP partitions and we basically want to copy all the files from windows boot manager to systemd-boot to allow us to easily swap OS!
 
 Note: If you're still having issues, you can try installing GRUB instead of systemd-boot. However, this would replace systemd-boot as your default bootloader.
 
