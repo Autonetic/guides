@@ -78,7 +78,7 @@ or using a more up to date algo:
 ```
 ssh-keygen -t ed25519 -a 100
 ```
->[!INFORMATION]
+>[!NOTE]
 >The -a option specifies 100 rounds of key deriverations, making your key's password harder to brute force.
  
  You will now be prompted for a file name, simply hit `Enter`
