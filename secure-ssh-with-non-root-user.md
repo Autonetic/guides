@@ -74,6 +74,12 @@ drwx------ 19 user user 4.0K Jun  4 23:35 ..
 ```
 ssh-keygen -t rsa -b 2048
 ```
+or using a more up to date algo:
+```
+ssh-keygen -t ed25519 -a 100
+```
+>[!INFORMATION]
+>The -a option specifies 100 rounds of key deriverations, making your key's password harder to brute force.
  
  You will now be prompted for a file name, simply hit `Enter`
  
