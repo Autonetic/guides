@@ -1,32 +1,92 @@
-PHP PDO MySQL AJAX Comment Form
+Working PHP, PDO, MySQL and AJAX Comment Form.
 
-To create a PHP PDO MySQL AJAX comment form that includes fields for name, email, date, comment_id, and post_id, you can follow these steps:
+I have made a very simple php/ajax comment form, I ran into a series of shorfalls along the way, so I have written this guide, to both help me remember AJAX calls and to help anyone else who may be having similar issues when tryng to get PHP to talk with jQuery.
 
-1. **Database Table Creation**: First, create a MySQL table to store the comments. This table should include columns for `id`, `post_id`, `comment_id`, `name`, `email`, `comment`, and `submit_date`.
+To create a PHP PDO MySQL AJAX comment form that includes fields for name, email, date, comment_id, and post_id, you can follow these steps (I will provide the files at the end of the guide):
 
-   ```sql
-   CREATE TABLE comments (
-       id INT AUTO_INCREMENT PRIMARY KEY,
-       post_id INT NOT NULL,
-       comment_id INT DEFAULT 0,
-       name VARCHAR(255) NOT NULL,
-       email VARCHAR(255) NOT NULL,
-       comment TEXT NOT NULL,
-       submit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   );
-   ```
+1. **Database Table Creation**: First, create a MySQL table to store the comments. This table should include columns for `comment_id`, `post_id`, `timestamp`, `name`, `email` and `message`.
 
-2. **HTML Form**: Create an HTML form that allows users to input their name, email, comment, and submit the form. The form should also include hidden fields for `post_id` and `comment_id`.
+```sql
+CREATE TABLE `comments` (
+  `comment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` bigint(20) NOT NULL,
+  `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  PRIMARY KEY (`comment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+```
 
-   ```html
-   <form id="commentForm">
-       <input type="hidden" id="post_id" name="post_id" value="123">
-       <input type="hidden" id="comment_id" name="comment_id" value="0">
-       <input type="text" id="name" name="name" placeholder="Name" required>
-       <input type="email" id="email" name="email" placeholder="Email" required>
-       <textarea id="comment" name="comment" placeholder="Comment" required></textarea>
-       <button type="submit">Submit Comment</button>
-   </form>
+2. **PHP Form**: index.php - Create a PHP form that allows users to input their name, email, comment, and submit the form. The form should also include a hidden field for `post_id`. this code presumes that your page request will include the id of the post that the comment belongs to. For example `http://localhost/blog/index.php?id=1`. For testing purposes, I have made default requests belong to post id `0`. 
+
+```php
+<?php
+if(!isset($_GET['id'])) {
+    $_GET['id'] = '0';
+}
+?>
+<head>
+<title>PHP AJAX Comments</title>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body>
+<div id="comment_message"></div>
+
+<form id="comment_form">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="text" name="email" placeholder="Email" required>
+    <textarea name="message" placeholder="Comment" required></textarea>
+    <input type="hidden" name="post_id" value="<?php $_GET['id'];?>">
+    <button type="submit">Submit</button>
+</form>
+<div id="display_comment"></div>
+
+<script>
+$(document).ready(function(){
+    $('#comment_form').on('submit', function(event){
+        event.preventDefault();
+        var form_data = $(this).serialize();
+        $.ajax({
+            url:"comment-add.php",
+            method:"POST",
+            data:form_data,
+            dataType:"JSON",
+            /*success:function(data) {
+                if(data.error != '') {
+                    $('#comment_form').reset();
+                    $('#comment_message').html(data.error);
+                    $('#comment_id').val('0');
+                    load_comment();
+                }*/
+            success: function(response) {
+                if (response.error == 0) {
+                    $('#comment_message').html(response.message);
+                    setTimeout(function() {
+                        // Your jQuery action here
+                        location.reload();
+                    }, 1000); // Delay in millisecondslocation.reload();
+                    $('#comment_form').reset();
+                    $('#comment_id').val('0');
+                    load_comment();
+                } else if (response.error) {
+                    $('#comment_message').html(response.message);
+                }
+            }
+        })
+    });
+    load_comment();
+    function load_comment() {
+        $.ajax({
+            url:"comment-list.php",
+            method:"POST",
+            success:function(data) {
+                $('#display_comment').html(data);
+            }
+        })
+    }
+});
+</script>
    ```
 
 3. **AJAX Request**: Use JavaScript (jQuery) to handle the form submission via AJAX. This will send the form data to a PHP script without refreshing the page.
