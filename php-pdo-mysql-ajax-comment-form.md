@@ -18,7 +18,7 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
 
-2. **PHP Form**: index.php - Create a PHP form that allows users to input their name, email, comment, and submit the form. The form should also include a hidden field for `post_id`. this code presumes that your page request will include the id of the post that the comment belongs to. For example `http://localhost/blog/index.php?id=1`. For testing purposes, I have made default requests belong to post id `0`. 
+2. **PHP Form**: (`index.php`) Create a PHP form that allows users to input their name, email, comment, and submit the form. The form should also include a hidden field for `post_id`. this code presumes that your page request will include the id of the post that the comment belongs to. For example `http://localhost/blog/index.php?id=1`. For testing purposes, I have made default requests belong to post id `0`. 
 
 ```php
 <?php
@@ -87,117 +87,81 @@ $(document).ready(function(){
     }
 });
 </script>
-   ```
+```
 
-3. **AJAX Request**: Use JavaScript (jQuery) to handle the form submission via AJAX. This will send the form data to a PHP script without refreshing the page.
+3. **PHP Script**: (`db.php`) Create a database connection file, we'll use PDO for this.
+```php
+<?php
+//database credentials
+define('DBHOST','localhost');
+define('DBUSER','comments');
+define('DBPASS','#1234567');
+define('DBNAME','comments_test');
 
-   ```javascript
-   $(document).ready(function() {
-       $('#commentForm').on('submit', function(event) {
-           event.preventDefault();
-           var formData = $(this).serialize();
-           $.ajax({
-               url: "submit_comment.php",
-               method: "POST",
-               data: formData,
-               dataType: "JSON",
-               success: function(response) {
-                   if (!response.error) {
-                       $('#commentForm')reset();
-                       $('#comment_id').val('0');
-                       $('#message').html(response.message);
-                       showComments();
-                   } else if (response.error) {
-                       $('#message').html(response.message);
-                   }
-               }
-           });
-       });
-   });
-   ```
+$pdo = new PDO("mysql:host=".DBHOST.";port=8889;dbname=".DBNAME, DBUSER, DBPASS);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+?>
+```
 
-4. **PHP Script**: Create a PHP script (`submit_comment.php`) that uses PDO to insert the comment into the database.
 
-   ```php
-   <?php
-   if (!empty($_POST["name"]) && !empty($_POST["email"]) && !empty($_POST["comment"])) {
-       $post_id = $_POST["post_id"];
-       $comment_id = $_POST["comment_id"];
-       $name = $_POST["name"];
-       $email = $_POST["email"];
-       $comment = $_POST["comment"];
-       $submit_date = date("Y-m-d H:i:s");
+4. **PHP Script**: Create a PHP script (`comment-add.php`) that uses PDO to insert the comment into the database.
 
-       try {
-           $db_host = "localhost";
-           $db_user = "root";
-           $db_pass = "pass";
-           $db_name = "your_database";
-           $db_conn = new PDO("mysql:host={$db_host};dbname={$db_name}", $db_user, $db_pass);
-           $db_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+```php
+<?php
+include 'db.php'; // Database connection file
+date_default_timezone_set('Australia/Melbourne');
+if(!isset($_GET['id'])) {
+    $_GET['id'] = '0';
+}
+if(isset($_POST['name'], $_POST['email'], $_POST['message']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    $post_id = $_GET['id'] ?? 0;
+    $timestamp = date('Y-m-d H:i:s', time());
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
+    $sql = "INSERT INTO comments (post_id, timestamp, name, email, message) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$post_id, $timestamp, $name, $email, $message]);
+    $comment_message = "Comment posted";
+    $status = array('error' => 0, 'message' => $comment_message);
+    echo json_encode($status);
+} elseif(isset($_POST['name'], $_POST['email'], $_POST['message']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    $comment_message = "Invalid email address";
+    $status = array('error' => 1, 'message' => $comment_message);
+    echo json_encode($status);
+} else {
+    $comment_message = "Invalid input";
+    $status = array('error' => 1, 'message' => $comment_message);
+    echo json_encode($status);
+}
+?>
+```
 
-           $stmt = $db_conn->prepare("INSERT INTO comments (post_id, comment_id, name, email, comment, submit_date) VALUES (?, ?, ?, ?, ?, ?)");
-           $stmt->execute([$post_id, $comment_id, $name, $email, $comment, $submit_date]);
+5. **Display Comments**: (`comment-list.php`) Create another PHP file that will get any comments that already exist.
 
-           $message = "Comment posted successfully.";
-           $status = array('error' => 0, 'message' => $message);
-       } catch (PDOException $e) {
-           $message = "Error: Comment not posted.";
-           $status = array('error' => 1, 'message' => $message);
-       }
+```php
+<?php
+include 'db.php'; // Database connection file
+$sql = "SELECT * FROM comments ORDER BY comment_id DESC";
+$stmt = $pdo->query($sql);
+$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+foreach ($comments as $comment) {
+    echo "<div>";
+    echo "<p><strong>" . htmlspecialchars($comment['name']) . "</strong>: " . htmlspecialchars($comment['message']) . "</p>";
+    echo "<p><small>Posted at: " . $comment['timestamp'] . "</small></p>";
+    if ($comment['post_id'] == 0) {
+        echo "<button onclick='postReply(" . $comment['comment_id'] . ")'>Reply</button>";
+    }
+    echo "</div>";
+}
+if (empty($comments)) {
+    echo "<div>";
+    echo "<p><strong>" . "No Comments Yet." . "</strong></p>";
+    echo "</div>";
+}
+?>
+ ```
 
-       echo json_encode($status);
-   } else {
-       echo json_encode(array('error' => 1, 'message' => 'All fields are required.'));
-   }
-   ?>
-   ```
+Thats pretty much it, following these steps you will be able to create a PHP, PDO, MySQL and AJAX comment form that includes a little email validation! =)
 
-5. **Display Comments**: Create a function to display the comments from the database using AJAX.
-
-   ```javascript
-   function showComments() {
-       $.ajax({
-           url: "show_comments.php",
-           method: "GET",
-           success: function(data) {
-               $('#comments').html(data);
-           }
-       });
-   }
-   ```
-
-6. **PHP Script for Comments Display**: Create a PHP script (`show_comments.php`) that retrieves and displays the comments from the database.
-
-   ```php
-   <?php
-   if (isset($_GET['post_id'])) {
-       $post_id = $_GET['post_id'];
-       try {
-           $db_host = "localhost";
-           $db_user = "root";
-           $db_pass = "pass";
-           $db_name = "your_database";
-           $db_conn = new PDO("mysql:host={$db_host};dbname={$db_name}", $db_user, $db_pass);
-           $db_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-           $stmt = $db_conn->prepare("SELECT * FROM comments WHERE post_id = ? ORDER BY submit_date DESC");
-           $stmt->execute([$post_id]);
-           $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-           foreach ($comments as $comment) {
-               echo "<div>";
-               echo "<strong>" . htmlspecialchars($comment['name']) . "</strong> on " . htmlspecialchars($comment['submit_date']) . "<br>";
-               echo htmlspecialchars($comment['comment']) . "<br>";
-               echo "</div>";
-           }
-       } catch (PDOException $e) {
-           echo "Error: " . $e->getMessage();
-       }
-   } else {
-       echo "No post ID specified!";
-   }
-   ?>
-   ```
-
-By following these steps, you can create a PHP PDO MySQL AJAX comment form that includes fields for name, email, date, comment_id, and post_id. 
+All source files available at [Autonetix.au](https://autonetix.au)
