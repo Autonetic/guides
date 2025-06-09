@@ -1,0 +1,49 @@
+Laravel Login App
+
+To set up a basic Laravel login and home page application, follow these steps:
+
+1. **Generate Authentication Files**: Use the `php artisan make:auth` command to generate the necessary authentication files, including routes, controllers, and views. This command will also create a HomeController to handle post-login requests to your application's dashboard.
+
+   ```bash
+   php artisan make:auth
+   ```
+
+2. **Customize Routes**: Modify the routes to fit your application's needs. For instance, you can disable registration by removing the newly created RegisterController and updating your route declaration:
+
+   ```php
+   Auth::routes(['register' => false]);
+   ```
+
+3. **Setup Views**: Laravel will create the necessary views in the `resources/views/auth` directory. Customize these views according to your application's design. For example, you can create a `home.blade.php` file in the `resources/views` directory to serve as the home page after a successful login.
+
+4. **Handle Authentication Logic**: Use Laravel's built-in authentication methods such as `Auth::attempt` to authenticate users. This method hashes the password automatically, so there's no need to hash it manually.
+
+   ```php
+   if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+       // Authentication passed...
+       return redirect()->intended('home');
+   }
+   ```
+
+5. **Logout Functionality**: Implement a logout functionality to clear the user session and redirect them to the login page.
+
+   ```php
+   Route::get('logout', function () {
+       Auth::logout();
+       return redirect('/');
+   });
+   ```
+
+6. **Protect Routes**: Use middleware to protect routes that should only be accessible to authenticated users. For example, you can use the `auth` middleware to ensure that only authenticated users can access the home page.
+
+   ```php
+   Route::get('home', function () {
+       // Only authenticated users may enter...
+   })->middleware('auth');
+   ```
+
+By following these steps, you can create a basic Laravel application with login and home page functionalities
+
+References:
+: https://www.cloudways.com/blog/setup-laravel-login-authentication/
+: https://laravel.com/docs/5.7/authentication
